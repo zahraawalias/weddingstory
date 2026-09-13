@@ -305,9 +305,25 @@
     .couple-names-cover{font-size:36px;}
     .cd-box{width:56px;}
   }
+
+  /* ================= VIDEO INTRO (tambahan) ================= */
+  #introOverlay{
+    position:fixed;inset:0;z-index:500;background:#000;
+    transition:opacity .8s ease;
+  }
+  #introOverlay video{width:100%;height:100%;object-fit:cover;}
+  #introOverlay.hide{opacity:0;pointer-events:none;}
 </style>
 </head>
 <body class="locked">
+
+<!-- Video Intro (tampil duluan, sebelum undangan aslinya) -->
+<div id="introOverlay">
+  <video id="introVideo" autoplay muted playsinline webkit-playsinline>
+    <source src="assets/video/opening.mp4" type="video/mp4">
+    <!-- GANTI path di atas dengan file video kamu -->
+  </video>
+</div>
 
 <div class="side-backdrop"></div>
 <audio id="bgMusic" loop preload="none"></audio>
@@ -501,7 +517,7 @@
   // Tempel URL Web App Google Apps Script kamu di sini (lihat Code.gs
   // & PANDUAN-SETUP.md). Selama masih kosong / belum di-deploy, situs
   // akan menampilkan data contoh di bawah supaya desain tetap bisa dicek.
-  var APPS_SCRIPT_URL = "PASTE_URL_GOOGLE_APPS_SCRIPT_DI_SINI";
+  var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwVw_2KX-YbanXXnfkIIn0hsCvMVUxXZ2WtLYfH1v7nP2vHxwOQtR2Hr8Bo9IwUP2j/exec";
 
   // Nama parameter di URL untuk membedakan tiap tamu, contoh:
   // https://domainkamu.com/?to=A1
@@ -977,6 +993,24 @@
   }
 
   document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+
+<!-- Video intro gate: murni tambahan, tidak menyentuh logika di atas -->
+<script>
+(function(){
+  var overlay = document.getElementById("introOverlay");
+  var video = document.getElementById("introVideo");
+  var done = false;
+  function finishIntro(){
+    if (done) return;
+    done = true;
+    overlay.classList.add("hide");
+  }
+  video.addEventListener("ended", finishIntro);
+  video.addEventListener("error", finishIntro); // video gagal dimuat -> lanjut ke undangan
+  overlay.addEventListener("click", finishIntro); // ketuk video = lewati
+  setTimeout(finishIntro, 15000); // jaga-jaga kalau autoplay diblokir browser
 })();
 </script>
 </body>
